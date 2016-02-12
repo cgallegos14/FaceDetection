@@ -24,6 +24,8 @@ import android.util.Log;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.face.Face;
 
+import java.util.ArrayList;
+
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
  * graphic overlay view.
@@ -34,7 +36,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private static final float ID_Y_OFFSET = 50.0f;
     private static final float ID_X_OFFSET = -50.0f;
     private static final float BOX_STROKE_WIDTH = 5.0f;
-
+    static int count= 0;
+    ArrayList coordinateArray = new ArrayList();
     private static final int COLOR_CHOICES[] = {
         Color.BLUE,
         Color.CYAN,
@@ -104,10 +107,21 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
         canvas.drawText("happiness: " + String.format("%.2f", face.getIsSmilingProbability()), x - ID_X_OFFSET, y - ID_Y_OFFSET, mIdPaint);
         canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), x + ID_X_OFFSET * 2, y + ID_Y_OFFSET * 2, mIdPaint);
-        canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET*2, y - ID_Y_OFFSET*2, mIdPaint);
+        canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET * 2, y - ID_Y_OFFSET * 2, mIdPaint);
 
-
+        if (coordinateArray.size() <= 40){
+            coordinateArray.add(0,x);
+        }
+        else{
+            coordinateArray.remove(40);
+            coordinateArray.add(0,x);
+        }
+        count++;
+        int last = coordinateArray.size();
+        String temp = Integer.toString(count);
         Log.i("TEST","Coordinates of Face: " +  Float.toString(x) + " " + Float.toString(y));
+        Log.i("TESTARRAY","ARRAY VALUE OF LOCATION 0 " +  coordinateArray.get(last-1) + "........." + coordinateArray.size());
+        Log.i("frames called ==> ",temp);
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
