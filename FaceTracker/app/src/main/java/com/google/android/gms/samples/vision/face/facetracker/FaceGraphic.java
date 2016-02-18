@@ -15,9 +15,11 @@
  */
 package com.google.android.gms.samples.vision.face.facetracker;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.nfc.Tag;
 import android.util.Log;
 
@@ -37,6 +39,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private static final float ID_X_OFFSET = -50.0f;
     private static final float BOX_STROKE_WIDTH = 5.0f;
     static int count= 0;
+    //public FaceTrackerActivity test = new FaceTrackerActivity();
     ArrayList coordinateArray = new ArrayList();
     private static final int COLOR_CHOICES[] = {
         Color.BLUE,
@@ -111,6 +114,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
 
         if (coordinateArray.size() <= 40){
             coordinateArray.add(0,x);
+            FaceTrackerActivity.playSound();
         }
         else{
             coordinateArray.remove(40);
@@ -120,7 +124,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         int last = coordinateArray.size();
         String temp = Integer.toString(count);
         Log.i("TEST","Coordinates of Face: " +  Float.toString(x) + " " + Float.toString(y));
-        Log.i("TESTARRAY","ARRAY VALUE OF LOCATION 0 " +  coordinateArray.get(last-1) + "........." + coordinateArray.size());
+        Log.i("TESTARRAY","ARRAY VALUE OF LOCATION 0 " +  coordinateArray.get(0) + "........." + coordinateArray.size());
         Log.i("frames called ==> ",temp);
 
         // Draws a bounding box around the face.

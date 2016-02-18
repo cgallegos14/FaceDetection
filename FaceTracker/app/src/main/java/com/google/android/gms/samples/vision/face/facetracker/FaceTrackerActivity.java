@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -57,6 +58,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
+
+    static MediaPlayer wakeUpSound;
+
+
+
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
@@ -80,6 +86,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         } else {
             requestCameraPermission();
         }
+
+        wakeUpSound = MediaPlayer.create(this,R.raw.playagain);
     }
 
     /**
@@ -87,6 +95,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * showing a "Snackbar" message of why the permission is needed then
      * sending the request.
      */
+
+    public static void playSound(){
+        wakeUpSound.start();
+    }
+
+
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
 
