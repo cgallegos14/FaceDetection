@@ -28,6 +28,8 @@ import com.google.android.gms.vision.face.Face;
 
 import java.util.ArrayList;
 
+//test comment marcus
+
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
  * graphic overlay view.
@@ -123,8 +125,13 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         count++;
         int last = coordinateArray.size();
         String temp = Integer.toString(count);
+<<<<<<< HEAD
         Log.i("TEST","Coordinates of Face: " +  Float.toString(x) + " " + Float.toString(y));
         Log.i("TESTARRAY","ARRAY VALUE OF LOCATION 0 " +  coordinateArray.get(0) + "........." + coordinateArray.size());
+=======
+        Log.i("TEST", "Coordinates of Face: " + Float.toString(x) + " " + Float.toString(y));
+        Log.i("TESTARRAY", "ARRAY VALUE OF LOCATION 0 " + coordinateArray.get(last - 1) + "........." + coordinateArray.size());
+>>>>>>> 05763ee21e8f9d4ab1afc979ca07e2c968b2b4ca
         Log.i("frames called ==> ",temp);
 
         // Draws a bounding box around the face.
