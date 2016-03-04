@@ -15,12 +15,9 @@
  */
 package com.google.android.gms.samples.vision.face.facetracker;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.media.MediaPlayer;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
@@ -61,6 +58,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private volatile Face mFace;
     private int mFaceId;
     private float mFaceHappiness;
+
+    ArrayList<FaceData> storeData = new ArrayList<FaceData>();
 
     FaceGraphic(GraphicOverlay overlay) {
         super(overlay);
@@ -139,5 +138,43 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float right = x + xOffset;
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
+
+        storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom));   //stores face data using FaceData object
+
+        if(storeData.size() > 50) {     //if size of data array is greater than 50
+            Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
+            test.printData();
+        }
+    }
+
+    /**
+     * Internal class helper
+     * Allows the storing of face data in simple manner
+     */
+    private class FaceData {
+
+        protected float leftEye;
+        protected float rightEye;
+        protected float bottom;
+
+        /**
+         * Class constructor
+         * @param leftEye, the leftEye value
+         * @param rightEye, the rightEye value
+         * @param bottom, the Bottom box coordinates
+         */
+        public FaceData(float leftEye, float rightEye, float bottom){
+            this.leftEye = leftEye;
+            this.rightEye = rightEye;
+            this.bottom = bottom;
+        }
+
+        /**
+         * Overridden toString method to print stored data
+         * @return a string consisting of a tuple of data sets
+         */
+        public String toString() {
+            return "(" + leftEye + ", " + rightEye + ", " + bottom + ")\n";
+        }
     }
 }
