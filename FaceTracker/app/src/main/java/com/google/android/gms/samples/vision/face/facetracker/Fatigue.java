@@ -48,4 +48,35 @@ public class Fatigue {
             Log.i("TESTIINNGG", data.toString());
         }
     }
+
+    public void checkIfFatigued(){
+       // checkEye();
+
+    }
+
+    public void checkEye(){
+        int eyeCounter = 0;
+        for(int i = 0; i < data.size(); i++) {
+            //float leftEyeTemp = data.indexOf(i).getRightEye();
+            //float rightEyeTemp = data.indexOf(i).getRightEye();
+
+            if (30 < .30 && 30 < .30){
+                eyeCounter++;
+                if (eyeCounter >= 10){
+                    FaceGraphic.fatigueScore += 5;
+                }
+            }
+            else{
+                eyeCounter = 0;
+            }
+        }
+    }
+
+    public void checkNodding(){
+        //aaaaaahhhhhh god help us.....
+    }
+
+    public void checkHeadUpDown(){
+
+    }
 }

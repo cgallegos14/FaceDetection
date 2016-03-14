@@ -37,8 +37,12 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private static final float ID_Y_OFFSET = 50.0f;
     private static final float ID_X_OFFSET = -50.0f;
     private static final float BOX_STROKE_WIDTH = 5.0f;
+
+
     static int count= 0;
-    //public FaceTrackerActivity test = new FaceTrackerActivity();
+    static int fatigueScore = 0; //Used to keep score of fatigue, if > x trigger alert
+    static float baseline;
+
     ArrayList coordinateArray = new ArrayList();
     private static final int COLOR_CHOICES[] = {
         Color.BLUE,
@@ -113,6 +117,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), x + ID_X_OFFSET * 2, y + ID_Y_OFFSET * 2, mIdPaint);
         canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET * 2, y - ID_Y_OFFSET * 2, mIdPaint);
 
+
         if (coordinateArray.size() <= 40){
             coordinateArray.add(0,x);
             FaceTrackerActivity.playSound();
@@ -139,11 +144,23 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
 
-        storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom));   //stores face data using FaceData object
+
+        //Storing the baseline value for when face is first detected.
+        //Will only trigger once after 20 frames
+        if (count == 20 && mFaceId == 1){
+            baseline = bottom;
+            //PLay sound
+        }
+
+        //stores face data using FaceData object
+        storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom));
 
         if(storeData.size() > 50) {     //if size of data array is greater than 50
             Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
             test.printData();
+            test.checkIfFatigued();
+            //ADD if fatigue score above blah do call AlertDriver
+            //ADD if baseline = to null restart or something
         }
     }
 
@@ -151,11 +168,11 @@ class FaceGraphic extends GraphicOverlay.Graphic {
      * Internal class helper
      * Allows the storing of face data in simple manner
      */
-    private class FaceData {
+    public class FaceData {
 
-        protected float leftEye;
-        protected float rightEye;
-        protected float bottom;
+        private float leftEye;
+        private float rightEye;
+        private float bottom;
 
         /**
          * Class constructor
@@ -176,5 +193,18 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         public String toString() {
             return "(" + leftEye + ", " + rightEye + ", " + bottom + ")\n";
         }
+
+        public float getLeftEye(){
+            return this.leftEye;
+        }
+
+        public float getRightEye(){
+            return this.rightEye;
+        }
+
+        public float getButtomEye(){
+            return this.bottom;
+        }
+
     }
 }
