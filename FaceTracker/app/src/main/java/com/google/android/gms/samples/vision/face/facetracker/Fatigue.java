@@ -1,9 +1,8 @@
 package com.google.android.gms.samples.vision.face.facetracker;
 
 import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Created by Joshua on 3/4/2016.
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class Fatigue {
 
-    protected ArrayList data;
+    protected ArrayList<FaceGraphic.FaceData> data;
 
     /**
      * Constructor for class
@@ -44,23 +43,23 @@ public class Fatigue {
      * Prints the data using toString
      */
     public void printData() {
-        for(Object info: data) {
-            Log.i("TESTIINNGG", data.toString());
+        for (Object info : data) {
+            Log.i("TESTIINNGG", info.toString());
         }
     }
 
     public void checkIfFatigued(){
-       // checkEye();
+       checkEye();
 
     }
 
     public void checkEye(){
         int eyeCounter = 0;
-        for(int i = 0; i < data.size(); i++) {
-            //float leftEyeTemp = data.indexOf(i).getRightEye();
-            //float rightEyeTemp = data.indexOf(i).getRightEye();
+        for(FaceGraphic.FaceData temp : data) {
+            float leftEyeTemp = temp.getLeftEye();
+            float rightEyeTemp = temp.getRightEye();
 
-            if (30 < .30 && 30 < .30){
+            if (leftEyeTemp < .30 && rightEyeTemp < .30){
                 eyeCounter++;
                 if (eyeCounter >= 10){
                     FaceGraphic.fatigueScore += 5;
@@ -69,6 +68,8 @@ public class Fatigue {
             else{
                 eyeCounter = 0;
             }
+
+            Log.i("EyeCounterTest", "checkEye: leftEye = " + leftEyeTemp + ", checkEye: rightEye = " + rightEyeTemp);
         }
     }
 

@@ -157,7 +157,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
 
         if(storeData.size() > 50) {     //if size of data array is greater than 50
             Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
-            test.printData();
+            //test.printData();
             test.checkIfFatigued();
             //ADD if fatigue score above blah do call AlertDriver
             //ADD if baseline = to null restart or something
@@ -194,15 +194,27 @@ class FaceGraphic extends GraphicOverlay.Graphic {
             return "(" + leftEye + ", " + rightEye + ", " + bottom + ")\n";
         }
 
+        /**
+         * Gets the value of the left eye
+         * @return the value of the left eye
+         */
         public float getLeftEye(){
             return this.leftEye;
         }
 
+        /**
+         * Gets the value of the right eye
+         * @return the value of the right eye
+         */
         public float getRightEye(){
             return this.rightEye;
         }
 
-        public float getButtomEye(){
+        /**
+         * Gets the value of the bottom line tracking the chin
+         * @return the bottom line
+         */
+        public float getBottom(){
             return this.bottom;
         }
 
