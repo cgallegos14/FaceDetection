@@ -42,6 +42,7 @@ public class Fatigue {
     /**
      * Prints the data using toString
      */
+
     public void printData() {
         for (Object info : data) {
             Log.i("TESTIINNGG", info.toString());
@@ -56,12 +57,13 @@ public class Fatigue {
     public void checkEye(){
         int eyeCounter = 0;
         for(FaceGraphic.FaceData temp : data) {
+
             float leftEyeTemp = temp.getLeftEye();
             float rightEyeTemp = temp.getRightEye();
 
             if (leftEyeTemp < .30 && rightEyeTemp < .30){
                 eyeCounter++;
-                if (eyeCounter >= 10){
+                if (eyeCounter >= 20){
                     FaceGraphic.fatigueScore += 5;
                 }
             }
@@ -69,8 +71,12 @@ public class Fatigue {
                 eyeCounter = 0;
             }
 
-            Log.i("EyeCounterTest", "checkEye: leftEye = " + leftEyeTemp + ", checkEye: rightEye = " + rightEyeTemp);
+
+           //Log.i("EyeCounterTest", "checkEye: leftEye = " + leftEyeTemp + ", checkEye: rightEye = " + rightEyeTemp);
         }
+
+        Log.i("TESTIINNGG", "POOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooOP");
+        //FaceGrapgic.setValue(5);
     }
 
     public void checkNodding(){

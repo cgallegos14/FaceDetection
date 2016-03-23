@@ -134,6 +134,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         Log.i("TEST", "Coordinates of Face: " + Float.toString(x) + " " + Float.toString(y));
         Log.i("TESTARRAY", "ARRAY VALUE OF LOCATION 0 " + coordinateArray.get(last - 1) + "........." + coordinateArray.size());
         Log.i("frames called ==> ",temp);
+        Log.i("Baseline ==> ", Float.toString(baseline));
+        Log.i("BUCKETSCORE ", Integer.toString(fatigueScore));
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -147,18 +149,21 @@ class FaceGraphic extends GraphicOverlay.Graphic {
 
         //Storing the baseline value for when face is first detected.
         //Will only trigger once after 20 frames
-        if (count == 20 && mFaceId == 1){
+        if (count == 100 && mFaceId == 0){
             baseline = bottom;
-            //PLay sound
+            FaceTrackerActivity.playReadySound();
         }
 
         //stores face data using FaceData object
         storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom));
 
-        if(storeData.size() > 50) {     //if size of data array is greater than 50
+        if(storeData.size() > 25) {     //if size of data array is greater than 50
             Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
             //test.printData();
             test.checkIfFatigued();
+            storeData.clear();
+
+            //test.checkIfFatigued();
             //ADD if fatigue score above blah do call AlertDriver
             //ADD if baseline = to null restart or something
         }
