@@ -50,12 +50,12 @@ public class Fatigue {
     }
 
     public void checkIfFatigued(){
-       checkEye();
-
+        checkEye();
+        checkHeadUpDown();
     }
 
     public void checkEye(){
-        int eyeCounter = 0;
+        int eyeCounter = 3;
         for(FaceGraphic.FaceData temp : data) {
 
             float leftEyeTemp = temp.getLeftEye();
@@ -75,15 +75,40 @@ public class Fatigue {
            //Log.i("EyeCounterTest", "checkEye: leftEye = " + leftEyeTemp + ", checkEye: rightEye = " + rightEyeTemp);
         }
 
-        Log.i("TESTIINNGG", "POOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooOP");
+        //Log.i("TESTIINNGG", "POOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooOP");
         //FaceGrapgic.setValue(5);
     }
 
     public void checkNodding(){
-        //aaaaaahhhhhh god help us.....
+        
     }
 
     public void checkHeadUpDown(){
+        int headDownUpCounter = 3;
+        for(FaceGraphic.FaceData temp : data) {
+            float sizeOfSquare = temp.getBottom() - temp.getTop();
+            //Log.i("SizeOfSquare", "POOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooOP " + sizeOfSquare);
+            sizeOfSquare = sizeOfSquare * (float).3;
+            if(temp.getBottom() > FaceGraphic.baseline + sizeOfSquare * .5){
+                headDownUpCounter++;
+                if(headDownUpCounter > 10){
+                    FaceGraphic.fatigueScore += 50;
+                }
+            }
+            else if(temp.getBottom() < FaceGraphic.baseline - sizeOfSquare * .9){
+                headDownUpCounter++;
+                if(headDownUpCounter > 10){
+                    FaceGraphic.fatigueScore += 50;
+                }
+            }
+            else{
+                headDownUpCounter = 0;
+            }
+        }
+
+    }
+
+    public void getSizeOfSquare(){
 
     }
 }

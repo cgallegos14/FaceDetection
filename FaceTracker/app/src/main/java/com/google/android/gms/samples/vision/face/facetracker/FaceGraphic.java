@@ -135,6 +135,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         Log.i("TESTARRAY", "ARRAY VALUE OF LOCATION 0 " + coordinateArray.get(last - 1) + "........." + coordinateArray.size());
         Log.i("frames called ==> ",temp);
         Log.i("Baseline ==> ", Float.toString(baseline));
+
         Log.i("BUCKETSCORE ", Integer.toString(fatigueScore));
 
         // Draws a bounding box around the face.
@@ -147,17 +148,17 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
 
 
+
         //Storing the baseline value for when face is first detected.
         //Will only trigger once after 20 frames
         if (count == 100 && mFaceId == 0){
             baseline = bottom;
             FaceTrackerActivity.playReadySound();
         }
-
         //stores face data using FaceData object
-        storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom));
+        storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom, top));
 
-        if(storeData.size() > 25) {     //if size of data array is greater than 50
+        if(storeData.size() > 25 && baseline != 0) {     //if size of data array is greater than 50
             Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
             //test.printData();
             test.checkIfFatigued();
@@ -178,6 +179,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         private float leftEye;
         private float rightEye;
         private float bottom;
+        private float top;
 
         /**
          * Class constructor
@@ -185,10 +187,11 @@ class FaceGraphic extends GraphicOverlay.Graphic {
          * @param rightEye, the rightEye value
          * @param bottom, the Bottom box coordinates
          */
-        public FaceData(float leftEye, float rightEye, float bottom){
+        public FaceData(float leftEye, float rightEye, float bottom, float top){
             this.leftEye = leftEye;
             this.rightEye = rightEye;
             this.bottom = bottom;
+            this.top = top;
         }
 
         /**
@@ -196,7 +199,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
          * @return a string consisting of a tuple of data sets
          */
         public String toString() {
-            return "(" + leftEye + ", " + rightEye + ", " + bottom + ")\n";
+            return "(" + leftEye + ", " + rightEye + ", " + bottom + ", " + top + ")\n";
         }
 
         /**
@@ -222,6 +225,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         public float getBottom(){
             return this.bottom;
         }
+
+        public float getTop() { return this.top; }
 
     }
 }
