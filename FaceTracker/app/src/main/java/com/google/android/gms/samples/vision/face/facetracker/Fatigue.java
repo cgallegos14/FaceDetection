@@ -76,11 +76,10 @@ public class Fatigue {
         }
 
         //Log.i("TESTIINNGG", "POOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooOP");
-        //FaceGrapgic.setValue(5);
     }
 
     public void checkNodding(){
-        
+
     }
 
     public void checkHeadUpDown(){
@@ -105,10 +104,6 @@ public class Fatigue {
                 headDownUpCounter = 0;
             }
         }
-
-    }
-
-    public void getSizeOfSquare(){
 
     }
 }

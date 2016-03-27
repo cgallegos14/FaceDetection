@@ -43,7 +43,6 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     static int fatigueScore = 0; //Used to keep score of fatigue, if > x trigger alert
     static float baseline;
 
-    ArrayList coordinateArray = new ArrayList();
     private static final int COLOR_CHOICES[] = {
         Color.BLUE,
         Color.CYAN,
@@ -118,22 +117,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET * 2, y - ID_Y_OFFSET * 2, mIdPaint);
 
 
-        if (coordinateArray.size() <= 40){
-            coordinateArray.add(0,x);
-            FaceTrackerActivity.playSound();
-        }
-        else{
-            coordinateArray.remove(40);
-            coordinateArray.add(0,x);
-        }
-        count++;
-        int last = coordinateArray.size();
-        String temp = Integer.toString(count);
         Log.i("TEST","Coordinates of Face: " +  Float.toString(x) + " " + Float.toString(y));
-        Log.i("TESTARRAY","ARRAY VALUE OF LOCATION 0 " +  coordinateArray.get(0) + "........." + coordinateArray.size());
         Log.i("TEST", "Coordinates of Face: " + Float.toString(x) + " " + Float.toString(y));
-        Log.i("TESTARRAY", "ARRAY VALUE OF LOCATION 0 " + coordinateArray.get(last - 1) + "........." + coordinateArray.size());
-        Log.i("frames called ==> ",temp);
         Log.i("Baseline ==> ", Float.toString(baseline));
 
         Log.i("BUCKETSCORE ", Integer.toString(fatigueScore));
@@ -147,7 +132,10 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
 
-
+        //used to insure count doesnt get bigger than it needs to be
+        if(count < 120){
+            count++;
+        }
 
         //Storing the baseline value for when face is first detected.
         //Will only trigger once after 20 frames
@@ -158,13 +146,15 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         //stores face data using FaceData object
         storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom, top));
 
-        if(storeData.size() > 25 && baseline != 0) {     //if size of data array is greater than 50
+        if(storeData.size() > 25 && baseline != 0) {     //if size of data array is greater than 25
+            int temp = fatigueScore;
             Fatigue test = new Fatigue(storeData);              //send data to Fatigue class for processing
             //test.printData();
             test.checkIfFatigued();
+            if(fatigueScore == temp && fatigueScore > 0){
+                fatigueScore -= 5;
+            }
             storeData.clear();
-
-            //test.checkIfFatigued();
             //ADD if fatigue score above blah do call AlertDriver
             //ADD if baseline = to null restart or something
         }
