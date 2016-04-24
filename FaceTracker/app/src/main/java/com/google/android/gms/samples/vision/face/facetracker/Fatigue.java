@@ -79,7 +79,33 @@ public class Fatigue {
     }
 
     public void checkNodding(){
+        float firstNumber = 0;
+        float secondNumber = 0;
+        float thirdNumber = 0;
+        int count = 0;
+        int patternCounter = 0;
+        for(FaceGraphic.FaceData temp : data) {
+            if(count < 2) {
+                if (count == 0) {
+                    firstNumber = temp.getBottom();
+                    count++;
+                }
+                if (count == 1) {
+                    secondNumber = temp.getBottom();
+                    count++;
+                }
+            }
+            else {
+                if (secondNumber > firstNumber) {
+                    secondNumber = firstNumber;
 
+
+                } else if (secondNumber < firstNumber) {
+
+                }
+            }
+
+        }
     }
 
     public void checkHeadUpDown(){

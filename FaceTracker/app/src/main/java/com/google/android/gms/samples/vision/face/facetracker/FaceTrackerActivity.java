@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -29,6 +30,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -60,7 +65,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
 
     static MediaPlayer wakeUpSound;
-
+    static MediaPlayer readySound;
 
 
     //==============================================================================================
@@ -88,6 +93,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         }
 
         wakeUpSound = MediaPlayer.create(this,R.raw.playagain);
+        readySound = MediaPlayer.create(this,R.raw.cheer);
     }
 
     /**
@@ -100,6 +106,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         wakeUpSound.start();
     }
 
+    public static void playReadySound(){
+        readySound.start();
+    }
 
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
@@ -134,7 +143,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * at long distances.
      */
     private void createCameraSource() {
-
         Context context = getApplicationContext();
         FaceDetector detector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
@@ -304,9 +312,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * Start tracking the detected face instance within the face overlay.
          */
         @Override
-        public void onNewItem(int faceId, Face item) {
-            mFaceGraphic.setId(faceId);
-        }
+        public void onNewItem(int faceId, Face item) {mFaceGraphic.setId(faceId);}
 
         /**
          * Update the position/characteristics of the face within the overlay.
@@ -315,6 +321,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
+            if(FaceGraphic.fatigueScore > 200){
+                Intent in=new Intent(FaceTrackerActivity.this,AntiFatigueActivity.class);
+                startActivity(in);
+                finish();
+                FaceGraphic.fatigueScore = 0;
+            }
         }
 
         /**

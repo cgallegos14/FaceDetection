@@ -15,6 +15,7 @@
  */
 package com.google.android.gms.samples.vision.face.facetracker;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -117,11 +118,12 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET * 2, y - ID_Y_OFFSET * 2, mIdPaint);
 
 
-        Log.i("TEST","Coordinates of Face: " +  Float.toString(x) + " " + Float.toString(y));
+        Log.i("TEST", "Coordinates of Face: " + Float.toString(x) + " " + Float.toString(y));
         Log.i("TEST", "Coordinates of Face: " + Float.toString(x) + " " + Float.toString(y));
         Log.i("Baseline ==> ", Float.toString(baseline));
 
         Log.i("BUCKETSCORE ", Integer.toString(fatigueScore));
+        //FaceTrackerActivity.testToast();
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -143,6 +145,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
             baseline = bottom;
             FaceTrackerActivity.playReadySound();
         }
+        
         //stores face data using FaceData object
         storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom, top));
 
