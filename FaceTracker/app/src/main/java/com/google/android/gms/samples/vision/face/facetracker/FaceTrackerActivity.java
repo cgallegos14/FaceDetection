@@ -321,7 +321,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
-            if(FaceGraphic.fatigueScore > 200){
+            if(FaceGraphic.fatigueScore > 1600){
                 Intent in=new Intent(FaceTrackerActivity.this,AntiFatigueActivity.class);
                 startActivity(in);
                 finish();

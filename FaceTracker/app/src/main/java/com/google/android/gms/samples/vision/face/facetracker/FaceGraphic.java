@@ -64,6 +64,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private float mFaceHappiness;
 
     ArrayList<FaceData> storeData = new ArrayList<FaceData>();
+    ArrayList<FaceData> storeDataLarge = new ArrayList<FaceData>();
 
     FaceGraphic(GraphicOverlay overlay) {
         super(overlay);
@@ -144,10 +145,12 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         if (count == 100 && mFaceId == 0){
             baseline = bottom;
             FaceTrackerActivity.playReadySound();
+            storeData.clear();
         }
         
         //stores face data using FaceData object
         storeData.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom, top));
+        storeDataLarge.add(new FaceData(face.getIsLeftEyeOpenProbability(), face.getIsRightEyeOpenProbability(), bottom, top));
 
         if(storeData.size() > 25 && baseline != 0) {     //if size of data array is greater than 25
             int temp = fatigueScore;
@@ -155,12 +158,24 @@ class FaceGraphic extends GraphicOverlay.Graphic {
             //test.printData();
             test.checkIfFatigued();
             if(fatigueScore == temp && fatigueScore > 0){
-                fatigueScore -= 5;
+                fatigueScore -= 50;
             }
             storeData.clear();
             //ADD if fatigue score above blah do call AlertDriver
             //ADD if baseline = to null restart or something
         }
+
+        if(storeDataLarge.size() > 100 && baseline != 0) {     //if size of data array is greater than 25
+            int temp = fatigueScore;
+            Fatigue test = new Fatigue(storeDataLarge);              //send data to Fatigue class for processing
+            //test.printData();
+            test.checkIfFatigued();
+            if(fatigueScore == temp && fatigueScore > 0){
+                fatigueScore -= 50;
+            }
+            storeDataLarge.clear();
+        }
+
     }
 
     /**
