@@ -1,28 +1,75 @@
 package com.google.android.gms.samples.vision.face.facetracker;
 
 import android.Manifest;
-import android.content.Intent;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class AntiFatigueActivity extends ListActivity {
+
+    private static final int CONTACTS_ACCESS = 1;
+    private static final int PHONE_ACCESS = 2;
+    private boolean hasContactPermission = false;
+    private boolean canCall = false;
+    private boolean isPhoneCalling = false;
+    private ListView lv;
+    private Cursor c;
+    private SimpleCursorAdapter sadapt;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_anti_fatigue);
+
+        /*requests permissions*/
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, CONTACTS_ACCESS);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, PHONE_ACCESS);
+
+        /*Buttons*/
+        Button stopAlertButton = (Button) findViewById(R.id.stopAlert);
+        Button makeCallButton = (Button) findViewById(R.id.makeCall);
+
+        makeCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hasContactPermission) {
+                    getContacts();
+                }
+            }
+        });
+
+        stopAlertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(AntiFatigueActivity.this, FaceTrackerActivity.class);
+                startActivity(in);
+                finish();
+            }
+
+        });
+
+        /*Phone State checking*/
+        PhoneCallListener phone = new PhoneCallListener();
+        TelephonyManager manager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        manager.listen(phone, PhoneStateListener.LISTEN_CALL_STATE);
+
+    }
+
 
     @Override
     public long getSelectedItemId() {
@@ -35,31 +82,42 @@ public class AntiFatigueActivity extends ListActivity {
         return super.getSelectedItemPosition();
     }
 
-    ListView lv;
-    Cursor c;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_anti_fatigue);
-
-        //TextView tv=(TextView)findViewById(R.id.tv);
-
-
-        Button stopAlertButton = (Button) findViewById(R.id.stopAlert);
-        stopAlertButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(AntiFatigueActivity.this, FaceTrackerActivity.class);
-                startActivity(in);
-                finish();
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case CONTACTS_ACCESS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    hasContactPermission = true;
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    hasContactPermission = false;
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
             }
-        });
 
+            case PHONE_ACCESS: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    canCall = true;
+                }
+                else {
+                    canCall = false;
+                }
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
+    @SuppressLint("InlinedApi")
+    public void getContacts() {
         try {
-            c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-            startManagingCursor(c);
+            /*gets contact info for all favorite contacts*/
+            c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, "starred=1", null, null);
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
             //tv.setText(e.toString());
@@ -68,7 +126,7 @@ public class AntiFatigueActivity extends ListActivity {
         final String[] from = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone._ID};
         int[] to = {android.R.id.text1, android.R.id.text2};
 
-        SimpleCursorAdapter sadapt = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, c, from, to);
+        sadapt = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, c, from, to, 0);
         setListAdapter(sadapt);
 
         lv = getListView();
@@ -77,23 +135,59 @@ public class AntiFatigueActivity extends ListActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Toast.makeText(getBaseContext(),from[position].toString(),Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Intent.ACTION_CALL);
-                Toast.makeText(getBaseContext(),String.valueOf(position),Toast.LENGTH_LONG).show();
-                intent.setData(Uri.parse("tel:" + "5757700010"));
-                if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+
+                /* Gets number string from selected contact */
+                sadapt = (SimpleCursorAdapter) parent.getAdapter();
+                c = sadapt.getCursor();
+                String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                /* Filters all non-numeric numbers from number */
+                number = number.replaceAll("[^0-9.]", "");
+
+
+                Toast.makeText(getBaseContext(), number, Toast.LENGTH_SHORT).show();
+                intent.setData(Uri.parse("tel:" + number));
+
+                if(canCall) {
+                    startActivity(intent);
                 }
-                startActivity(intent);
+                else {
+                    Toast.makeText(getBaseContext(), "Needs Call permission", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
+    //monitor phone call activities
+    private class PhoneCallListener extends PhoneStateListener {
+
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+
+            if (TelephonyManager.CALL_STATE_RINGING == state) {
+
+            }
+
+            if (TelephonyManager.CALL_STATE_OFFHOOK == state) {
+                isPhoneCalling = true;
+            }
+
+            if (TelephonyManager.CALL_STATE_IDLE == state) {
+                // run when class initial and phone call ended,
+                // need detect flag from CALL_STATE_OFFHOOK
+                if (isPhoneCalling) {
+                    // restart app
+                   /* Intent i = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(
+                                    getBaseContext().getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);*/
+                    Toast.makeText(getBaseContext(), "Call Ended", Toast.LENGTH_SHORT).show();
+                    isPhoneCalling = false;
+                }
+
+            }
+        }
+    }
 }
